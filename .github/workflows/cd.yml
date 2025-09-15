@@ -1,0 +1,34 @@
+name: CD Pipeline
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t myorg/movie-backend:${{ github.sha }} .
+          docker tag myorg/movie-backend:${{ github.sha }} myorg/movie-backend:latest
+          docker push myorg/movie-backend:${{ github.sha }}
+          docker push myorg/movie-backend:latest
+
+      - name: Deploy to Server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} \
+          "docker pull myorg/movie-backend:latest && \
+           docker stop movie_backend || true && \
+           docker rm movie_backend || true && \
+           docker run -d --name movie_backend -p 8000:8000 \
+           --env-file /path/to/.env myorg/movie-backend:latest"

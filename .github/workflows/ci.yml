@@ -1,0 +1,54 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+  push:
+    branches: ["dev", "feature/*"]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        ports: ["5432:5432"]
+        env:
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: testdb
+        options: >-
+          --health-cmd="pg_isready -U testuser -d testdb"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+      redis:
+        image: redis:7
+        ports: ["6379:6379"]
+
+    env:
+      DATABASE_URL: postgres://testuser:testpass@localhost:5432/testdb
+      REDIS_URL: redis://localhost:6379/0
+      SECRET_KEY: testsecret
+      DEBUG: 1
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install black flake8 pytest pytest-django coverage
+
+      - name: Lint with flake8
+        run: flake8 .
+
+      - name: Format check with black
+        run: black --check .
+
+      - name: Run Tests
+        run: pytest --ds=movie_backend.settings --disable-warnings --maxfail=3
