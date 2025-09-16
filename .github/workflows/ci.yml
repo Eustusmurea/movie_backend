@@ -8,6 +8,7 @@ on:
 jobs:
   build-test:
     runs-on: ubuntu-latest
+
     services:
       postgres:
         image: postgres:15
@@ -21,9 +22,15 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
+
       redis:
         image: redis:7
         ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     env:
       DATABASE_URL: postgres://testuser:testpass@localhost:5432/testdb
@@ -39,6 +46,14 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
@@ -50,5 +65,7 @@ jobs:
       - name: Format check with black
         run: black --check .
 
-      - name: Run Tests
-        run: pytest --ds=movie_backend.settings --disable-warnings --maxfail=3
+      - name: Run Tests with Coverage
+        run: |
+          coverage run -m pytest --ds=movie_backend.settings --disable-warnings --maxfail=3
+          coverage report -m

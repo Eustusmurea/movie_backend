@@ -19,16 +19,17 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t myorg/movie-backend:${{ github.sha }} .
-          docker tag myorg/movie-backend:${{ github.sha }} myorg/movie-backend:latest
-          docker push myorg/movie-backend:${{ github.sha }}
-          docker push myorg/movie-backend:latest
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/movie-backend:${{ github.sha }} .
+          docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/movie-backend:${{ github.sha }} ${{ secrets.DOCKER_HUB_USERNAME }}/movie-backend:latest
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/movie-backend:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/movie-backend:latest
 
       - name: Deploy to Server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} \
-          "docker pull myorg/movie-backend:latest && \
+          "docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/movie-backend:latest && \
            docker stop movie_backend || true && \
            docker rm movie_backend || true && \
            docker run -d --name movie_backend -p 8000:8000 \
-           --env-file /path/to/.env myorg/movie-backend:latest"
+           --env-file /home/${{ secrets.SERVER_USER }}/.env \
+           ${{ secrets.DOCKER_HUB_USERNAME }}/movie-backend:latest"
