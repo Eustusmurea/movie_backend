@@ -45,8 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     #local apps
-    'users'
-    'movies'
+    'users',
+    'movies',
 ]
 
 MIDDLEWARE = [
@@ -104,6 +104,9 @@ SIMPLE_JWT = {
 
 CELERY_BROKER_URL = env("REDIS_URL", default="redis://redis:6379/0")
 CELERY_RESULT_BACKEND = env("REDIS_URL", default="redis://redis:6379/0")
+
+# Custom user model
+AUTH_USER_MODEL = 'users.User'
 
 
 

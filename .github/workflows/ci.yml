@@ -57,14 +57,26 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          pip install black flake8 pytest pytest-django coverage
+          pip install black flake8 isort pytest pytest-django coverage
 
-      - name: Lint with flake8
+      # --- Auto-formatting & linting ---
+      - name: Run isort (auto-fix imports)
+        run: isort .
+
+      - name: Run black (auto-fix formatting)
+        run: black .
+
+      - name: Run flake8 (lint after fixes)
         run: flake8 .
 
-      - name: Format check with black
-        run: black --check .
+      # --- Optional: auto-commit fixes back to branch ---
+      - name: Auto commit formatting fixes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "style: auto-fix formatting with black + isort"
+          branch: ${{ github.head_ref }}
 
+      # --- Run tests ---
       - name: Run Tests with Coverage
         run: |
           coverage run -m pytest --ds=movie_backend.settings --disable-warnings --maxfail=3
