@@ -1,0 +1,19 @@
+[tool.black]
+line-length = 88
+exclude = '''
+/(
+    .git
+  | __pycache__
+  | venv
+  | env
+  | migrations
+  | static
+  | media
+  | .github
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 88
+skip = ["venv", "env", "migrations", "static", "media", ".github"]
