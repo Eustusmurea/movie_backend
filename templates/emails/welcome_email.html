@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Welcome to Movie Backend</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f9f9f9; font-family: Arial, sans-serif; color:#333;">
+
+  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td align="center" style="padding:20px;">
+        <table width="600" cellpadding="20" cellspacing="0" style="background:#ffffff; border-radius:8px;">
+          <tr>
+            <td>
+              <h2 style="color:#2c3e50; margin-top:0;">Welcome to Movie AllStare</h2>
+
+              <p style="font-size:16px; line-height:1.5;">
+                Hello {{ user.first_name|default:"Movie Lover" }},
+              </p>
+
+              <p style="font-size:16px; line-height:1.5;">
+                Thank you for registering with <strong>Movie Backend</strong>!  
+                We’re thrilled to have you join our community of movie lovers.
+              </p>
+
+              <p style="font-size:16px; line-height:1.5;">
+                From now on, you’ll be able to explore trending movies, manage your favourites, 
+                and stay updated with the latest from TMDb.
+              </p>
+
+              <p style="font-size:16px; line-height:1.5;">
+                If you have any questions or need support, feel free to reply to this email.
+              </p>
+
+              <p style="margin-top:20px; font-size:16px; line-height:1.5;">
+                 Happy watching!<br><br>
+                <strong>Eustus Mwirigi</strong><br>
+                📞 +254715675511<br>
+                 <a href="mailto:mwirigieustus7@gmail.com" style="color:#2c3e50; text-decoration:none;">mwirigieustus7@gmail.com</a>
+              </p>
+
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>

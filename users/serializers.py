@@ -6,3 +6,4 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'email', 'favourites']
         read_only_fields = ['id', 'favourites']
+        ref_name = "UsersAppUser" 
