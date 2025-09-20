@@ -1,9 +1,10 @@
 # users/tasks.py
+import logging
+import os
+
 from celery import shared_task
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
-import os
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -17,9 +18,8 @@ def send_welcome_email_task(email, first_name="User"):
     # Render HTML template
     html_content = render_to_string(
         "emails/welcome_email.html",
-        {"user": {"first_name": first_name, "email": email}}
+        {"user": {"first_name": first_name, "email": email}},
     )
-
 
     # Plain-text fallback
     text_content = (

@@ -1,9 +1,10 @@
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from functools import lru_cache
 from typing import Dict, List, Optional
+
 import requests
 from django.conf import settings
-from functools import lru_cache
-from concurrent.futures import ThreadPoolExecutor, as_completed
-import time
 
 TMDB_API_KEY = settings.TMDB_API_KEY
 TMDB_BASE_URL = "https://api.themoviedb.org/3"
@@ -37,7 +38,9 @@ def _make_request(endpoint: str, params: Optional[Dict] = None) -> Optional[Dict
                 time.sleep(wait)
             elif 500 <= e.response.status_code < 600:
                 wait = RETRY_BACKOFF * attempt
-                print(f"Server error {e.response.status_code}. Retrying in {wait} seconds...")
+                print(
+                    f"Server error {e.response.status_code}. Retrying in {wait} seconds..."
+                )
                 time.sleep(wait)
             else:
                 print(f"TMDb API HTTP error: {e}")
@@ -71,7 +74,9 @@ def get_movies(movie_ids: List[int]) -> List[Dict]:
     """Fetch multiple movies concurrently."""
     movies = []
     with ThreadPoolExecutor(max_workers=5) as executor:
-        future_to_id = {executor.submit(get_movie_details, mid): mid for mid in movie_ids}
+        future_to_id = {
+            executor.submit(get_movie_details, mid): mid for mid in movie_ids
+        }
         for future in as_completed(future_to_id):
             movie = future.result()
             if movie:
@@ -146,30 +151,38 @@ def discover_movies() -> List[Dict]:
 # User Account Endpoints
 # ----------------------------
 def watchlist_movies(session_id: str, account_id: str) -> List[Dict]:
-    data = _make_request(
-        f"/account/{account_id}/watchlist/movies", {"session_id": session_id}
-    ) or {}
+    data = (
+        _make_request(
+            f"/account/{account_id}/watchlist/movies", {"session_id": session_id}
+        )
+        or {}
+    )
     return data.get("results", [])
 
 
 def watchlist_tv(session_id: str, account_id: str) -> List[Dict]:
-    data = _make_request(
-        f"/account/{account_id}/watchlist/tv", {"session_id": session_id}
-    ) or {}
+    data = (
+        _make_request(f"/account/{account_id}/watchlist/tv", {"session_id": session_id})
+        or {}
+    )
     return data.get("results", [])
 
 
 def favorite_movies(session_id: str, account_id: str) -> List[Dict]:
-    data = _make_request(
-        f"/account/{account_id}/favorite/movies", {"session_id": session_id}
-    ) or {}
+    data = (
+        _make_request(
+            f"/account/{account_id}/favorite/movies", {"session_id": session_id}
+        )
+        or {}
+    )
     return data.get("results", [])
 
 
 def favorite_tv(session_id: str, account_id: str) -> List[Dict]:
-    data = _make_request(
-        f"/account/{account_id}/favorite/tv", {"session_id": session_id}
-    ) or {}
+    data = (
+        _make_request(f"/account/{account_id}/favorite/tv", {"session_id": session_id})
+        or {}
+    )
     return data.get("results", [])
 
 
@@ -178,5 +191,8 @@ def get_account_details(session_id: str) -> Dict:
 
 
 def create_session(request_token: str) -> str:
-    data = _make_request("/authentication/session/new", {"request_token": request_token}) or {}
+    data = (
+        _make_request("/authentication/session/new", {"request_token": request_token})
+        or {}
+    )
     return data.get("session_id", "")

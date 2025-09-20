@@ -1,6 +1,7 @@
+from datetime import timedelta
+
 from django.contrib.auth import get_user_model
 from django.db import models
-from datetime import timedelta
 
 User = get_user_model()
 
@@ -20,7 +21,7 @@ class Movie(models.Model):
     poster_path = models.CharField(max_length=255, blank=True, null=True)
     genres = models.ManyToManyField(Genre)
     cached_at = models.DateTimeField(auto_now_add=True)  # last synced
-    cache_ttl = models.IntegerField(default=86400)       # seconds (1 day)
+    cache_ttl = models.IntegerField(default=86400)  # seconds (1 day)
 
     def __str__(self):
         return self.title
@@ -34,7 +35,7 @@ class TVShow(models.Model):
     poster_path = models.CharField(max_length=255, blank=True)
     genres = models.ManyToManyField(Genre, related_name="tvshows")
     cached_at = models.DateTimeField(auto_now_add=True)  # last synced
-    cache_ttl = models.IntegerField(default=86400)       # seconds (1 day)
+    cache_ttl = models.IntegerField(default=86400)  # seconds (1 day)
 
     def __str__(self):
         return self.name

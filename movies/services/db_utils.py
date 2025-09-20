@@ -1,8 +1,9 @@
+import logging
+from datetime import datetime, timedelta, timezone
 from typing import Optional
-from datetime import datetime, timezone, timedelta
+
 from movies.models import Genre, Movie, TVShow
 from movies.services.services import get_movie_details, get_tv_details
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +17,8 @@ def get_or_create_movie(tmdb_id: int) -> Optional[Movie]:
         if (
             movie.cached_at
             and movie.cache_ttl
-            and movie.cached_at + timedelta(seconds=movie.cache_ttl) < datetime.now(timezone.utc)
+            and movie.cached_at + timedelta(seconds=movie.cache_ttl)
+            < datetime.now(timezone.utc)
         ):
             movie_data = get_movie_details(tmdb_id)
             if movie_data:
@@ -55,7 +57,8 @@ def get_or_create_tv(tmdb_id: int) -> Optional[TVShow]:
             and hasattr(show, "cache_ttl")
             and show.cached_at
             and show.cache_ttl
-            and show.cached_at + timedelta(seconds=show.cache_ttl) < datetime.now(timezone.utc)
+            and show.cached_at + timedelta(seconds=show.cache_ttl)
+            < datetime.now(timezone.utc)
         ):
             show_data = get_tv_details(tmdb_id)
             if show_data:

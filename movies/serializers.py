@@ -22,14 +22,22 @@ class MovieSerializer(serializers.ModelSerializer):
         model = Movie
         fields = ["tmdb_id", "title", "overview", "poster_path", "genres"]
 
+
 # TVShow Serializer
 # ----------------------------
 class TVShowSerializer(serializers.ModelSerializer):
     genres = GenreSerializer(many=True, read_only=True)
+
     class Meta:
         model = TVShow
-        fields = ["tmdb_id", "name", "overview", "first_air_date", "poster_path", "genres"]
-
+        fields = [
+            "tmdb_id",
+            "name",
+            "overview",
+            "first_air_date",
+            "poster_path",
+            "genres",
+        ]
 
 
 # ----------------------------
